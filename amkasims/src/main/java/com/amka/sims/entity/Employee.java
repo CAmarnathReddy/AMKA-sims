@@ -25,7 +25,7 @@ public class Employee {
 
 	@Id
 	@GeneratedValue(generator = "emp-id-generator")
-	@GenericGenerator(name = "emp-id-generator", strategy = "com.relationalcrud.idgenerator.EmployeeIdGenerator")
+	@GenericGenerator(name = "emp-id-generator", strategy = "com.amka.sims.idgenerator.EmployeeIdGenerator")
 	@Column(length = 10)
 	private String id;
 
