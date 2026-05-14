@@ -1,14 +1,17 @@
 package com.amka.sims.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.amka.sims.entity.Employee;
+import com.amka.sims.entity.Location;
 import com.amka.sims.entity.Section;
 import com.amka.sims.entity.Standard;
 import com.amka.sims.exception.ResourceNotFoundException;
 import com.amka.sims.repository.EmployeeRepository;
+import com.amka.sims.repository.LocationRepository;
 import com.amka.sims.repository.SectionRepository;
 import com.amka.sims.repository.StandardRepository;
 
@@ -18,12 +21,14 @@ public class StandardService {
 	private final StandardRepository standardRepository;
 	private final SectionRepository sectionRepository;
 	private final EmployeeRepository employeeRepository;
+	private final LocationRepository locationRepository;
 
 	public StandardService(StandardRepository standardRepository, SectionRepository sectionRepository,
-			EmployeeRepository employeeRepository) {
+			EmployeeRepository employeeRepository, LocationRepository locationRepository) {
 		this.standardRepository = standardRepository;
 		this.sectionRepository = sectionRepository;
 		this.employeeRepository = employeeRepository;
+		this.locationRepository = locationRepository;
 	}
 
 	// related to standard
@@ -41,6 +46,10 @@ public class StandardService {
 				}
 				section.setStandard(standard);
 			}
+		}
+		Optional<Location> loc = locationRepository.findById(standard.getLocation().getLocationId());
+		if (loc != null) {
+			standard.setLocation(loc.get());
 		}
 
 		return standardRepository.save(standard);
@@ -70,11 +79,9 @@ public class StandardService {
 
 	public Section createSection(Long standardId, String empId, String sectionName) {
 		// Find Standard
-		System.out.println("sec started----");
 		Section section = new Section();
 		Standard standard = standardRepository.findById(standardId)
 				.orElseThrow(() -> new RuntimeException("Standard not found with id " + standardId));
-		System.out.println("Standard found---" + standard.getName());
 
 		if (empId != null && !empId.isBlank()) {
 			// Find Employee
@@ -100,13 +107,12 @@ public class StandardService {
 		}
 
 		// update incharge if new incharge have been updated
-		
-		if (empId != null && !empId.isBlank() && section.getIncharge()==null) {
+
+		if (empId != null && !empId.isBlank() && section.getIncharge() == null) {
 			Employee emp = employeeRepository.findById(empId)
 					.orElseThrow(() -> new RuntimeException("Employee not found with id " + empId));
 			section.setIncharge(emp);
-		}
-		else if (empId != null && !empId.isBlank() && !section.getIncharge().getId().equals(empId)) {
+		} else if (empId != null && !empId.isBlank() && !section.getIncharge().getId().equals(empId)) {
 			Employee emp = employeeRepository.findById(empId)
 					.orElseThrow(() -> new RuntimeException("Employee not found with id " + empId));
 			section.setIncharge(emp);

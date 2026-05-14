@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
@@ -14,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Data;
@@ -45,5 +47,10 @@ public class Employee {
 	
 	@Column(columnDefinition = "BOOLEAN DEFAULT true")
 	private Boolean isTeachingStaff;
+	
+	@ManyToOne
+	@JoinColumn(name = "se_id")
+	private ServiceEntity serviceEntity;
+
 
 }
